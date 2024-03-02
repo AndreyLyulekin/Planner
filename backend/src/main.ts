@@ -1,17 +1,16 @@
 import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app.module'
-import { PrismaClient } from '@prisma/client'
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-require('dotenv').config()
+import * as cookieParser from 'cookie-parser'
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule)
 
-	const prisma = new PrismaClient()
-
-	app.use((req, res, next) => {
-		req.prisma = prisma
-		next()
+	app.setGlobalPrefix('api')
+	app.use(cookieParser())
+	app.enableCors({
+		origin: ['http://localhost:3000'],
+		credentials: true,
+		exposedHeaders: 'set-cookie',
 	})
 
 	await app.listen(3000)
